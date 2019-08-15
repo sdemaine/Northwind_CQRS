@@ -43,7 +43,8 @@ namespace Northwind.WebUI
             services.AddTransient<INotificationService, NotificationService>();
             services.AddTransient<IDateTime, MachineDateTime>();
 
-            // Add MediatR
+            // Add MediatR (this is a bit clunky but it gets the job done for now).
+            // I am choosing a handler in each of the Query and Command assemblies so that I can tell Mediatr to monitor them
             services.AddMediatR(typeof(GetProductQueryHandler).GetTypeInfo().Assembly);
             services.AddMediatR(typeof(CreateProductCommandHandler).GetTypeInfo().Assembly);
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(RequestPerformanceBehaviour<,>));
@@ -59,6 +60,7 @@ namespace Northwind.WebUI
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CreateCustomerCommandValidator>());
 
 
+            // This allows for the dependency injection of the config file. It is injected as type IOptions<ConnectionStringConfig>, and referenced with *.Value.NorthwindDatabase
             services.Configure<ConnectionStringConfig>(this.Configuration.GetSection("ConnectionStrings"));
            
 
